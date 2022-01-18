@@ -1,7 +1,8 @@
 import os
+import networkx as nx
 
-
-GDB17_DIR = os.path.join(os.getcwd(), "data", "gdb17")
+DATA_DIR = os.path.join(os.getcwd(), "data")
+GDB17_DIR = os.path.join(DATA_DIR, "gdb17")
 
 def splitFile(fname, lpf=100000):
     fpath = os.path.join(GDB17_DIR, fname)
@@ -17,4 +18,20 @@ def splitFile(fname, lpf=100000):
         if small:
             small.close()
 
-splitFile("GDB17.50000000.smi")
+def readGraphml(fpath):
+    print("reading graph")
+    G = nx.read_graphml(fpath)
+    print(nx.info(G))
+    print(f"number_connected_components: {nx.number_connected_components(G)}")
+
+
+"}"    # print("drawing graph")
+    # n = nx.draw_networkx_nodes(G, pos=nx.spring_layout(G))
+    # this above command is taking a long time
+
+
+gp = os.path.join(DATA_DIR, "all_schema_UAV.graphml")
+readGraphml(gp)
+
+#gdb17 = "GDB17.50000000.smi"
+#splitFile(gdb17)
