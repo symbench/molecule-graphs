@@ -1,11 +1,11 @@
 import xml.etree.ElementTree as ET
 import sys
-file_name = "all_schema_UAV.graphml"
-node_id_seed = 105312256
+file_name = "all_schema_UAVnew.graphml"
+node_id_seed = 112185576 #105312256
 tree = ET.parse(file_name)
 root = tree.getroot()
 graph = None
-output_filename = "quadcopter.graphml"
+output_filename = "quadcopter2.graphml"
 output = open(output_filename, 'w')
 
 for child in root:

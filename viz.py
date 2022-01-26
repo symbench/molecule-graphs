@@ -3,21 +3,30 @@ import random
 import networkx as nx
 import os
 import uuid
-from typing import Union
+from typing import Union, List
 
-def drawGraph(G: Union[list, nx.classes.graph.Graph], node_color: list =None):
+
+def drawGraph(G: Union[List, nx.classes.graph.Graph], labels: List = None,
+              node_color: List = None):
 
     if isinstance(G, nx.classes.graph.Graph):
         nx.draw(G, node_color=node_color)
         plt.show()
     elif isinstance(G, list):
+        assert len(G) == len(labels)
+        fig, all_axes = plt.subplots(1, len(G))
+        ax = all_axes.flat
         for i in range(len(G)):
-            plt.figure(i)
-            nx.draw(G[i], node_color=node_color)
+            # plt.figure(i)
+            nx.draw_planar(G[i], ax=ax[i], node_size=20, with_labels=True)
+            if labels:
+                ax[i].set_title(labels[i])
     plt.show()
 
 
 """ create a grid of graphs with rows increasing node count """
+
+
 def makeGraphGrid(data: dict, rows: int = 4, cols: int = 4, useGdb13: bool = True, save: bool = True):
     fig, all_axes = plt.subplots(rows, cols)
     ax = all_axes.flat
