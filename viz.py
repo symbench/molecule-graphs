@@ -1,9 +1,10 @@
-import matplotlib.pyplot as plt
-import random
-import networkx as nx
 import os
+import random
 import uuid
-from typing import Union, List
+from typing import List, Union
+
+import matplotlib.pyplot as plt
+import networkx as nx
 
 
 def drawGraph(G: Union[List, nx.classes.graph.Graph], labels: List = None,
@@ -13,18 +14,18 @@ def drawGraph(G: Union[List, nx.classes.graph.Graph], labels: List = None,
         nx.draw(G, node_color=node_color)
         plt.show()
     elif isinstance(G, list):
-        assert len(G) == len(labels)
+        if labels is not None:
+            assert len(G) == len(labels)
         fig, all_axes = plt.subplots(1, len(G))
         ax = all_axes.flat
         for i in range(len(G)):
-            # plt.figure(i)
-            nx.draw_planar(G[i], ax=ax[i], node_size=20, with_labels=True)
+            # nx.draw_shell(G[i], ax=ax[i], node_size=20, with_labels=True)
+            # nx.draw_planar(G[i], ax=ax[i], node_size=20, with_labels=True)
+            # nx.draw_circular(G[i], ax=ax[i], node_size=20, with_labels=True) 
+            nx.draw_circular(G[i], ax=ax[i], node_size=30, with_labels=False)
             if labels:
                 ax[i].set_title(labels[i])
     plt.show()
-
-
-""" create a grid of graphs with rows increasing node count """
 
 
 def makeGraphGrid(data: dict, rows: int = 4, cols: int = 4, useGdb13: bool = True, save: bool = True):
@@ -56,3 +57,12 @@ def makeGraphGrid(data: dict, rows: int = 4, cols: int = 4, useGdb13: bool = Tru
         print("saving")
         plt.savefig(os.path.join("img", uuid.uuid4().hex[:10] + ".png"))
     plt.show()
+
+
+# def viewSmile(smile: str):
+#     template = Chem.MolFromSmiles('c1nccc2n1ccc2')
+#     AllChem.Compute2DCoords(template)
+#     ms = [Chem.MolFromSmiles(smi) for smi in (
+#         'OCCc1ccn2cnccc12', 'C1CC1Oc1cc2ccncn2c1', 'CNC(=O)c1nccc2cccn12')]
+#     for m in ms:
+#         _ = AllChem.GenerateDepictionMatching2DStructure(m, template)
