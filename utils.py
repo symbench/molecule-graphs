@@ -46,8 +46,8 @@ def readGraphml(fpath):
     gt.graph_draw(g, pos, output_size=(1000, 1000), vertex_color=[1, 1, 1, 0])
 
 
-gp = os.path.join(DATA_DIR, "quadcopter-1.graphml")
-readGraphml(gp)
+if __name__ == "__main__":
+	gp = os.path.join(DATA_DIR, "quadcopter-1.graphml")
+	readGraphml(gp)
 
-#gdb17 = "GDB17.50000000.smi"
-# splitFile(gdb17)
+

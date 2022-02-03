@@ -31,8 +31,10 @@ class MoleculeDataset():
         else:
             self.smifiles = os.listdir(os.path.join(
                 os.getcwd(), "data", self.dname))
+        self.smifiles.remove(".DS_Store") if ".DS_Store" in self.smifiles else self.smifiles
 
     def readSmileFiles(self):
+        print(f"reading from: {self.smifiles}")
         cwd = os.getcwd()
         osj = os.path.join
         count = 0
@@ -102,7 +104,7 @@ class MGraph(Individual):
 
     def removeNode(self):
         G = self._getGraph()
-        count = random.randint(0, len(G.nodes) // 3)
+        count = random.randint(0, len(G.nodes))
         nodesToRemove = [random.randint(0, len(G.nodes)) for _ in range(count)]
         print(f"removing nodes {nodesToRemove}")
         G.remove_nodes_from(nodesToRemove)
@@ -117,8 +119,9 @@ class MGraph(Individual):
 
     def removeEdge(self):
         G = self._getGraph()
-        count = random.randint(0, len(G.edges) // 4)
-        edgesToRemove = set([random.choice(list(G.edges)) for _ in range(count)])
+        count = random.randint(0, len(G.edges) // 3)
+        edgesToRemove = set([random.choice(list(G.edges))
+                            for _ in range(count)])
         if len(edgesToRemove) > 0:
             G.remove_edges_from(edgesToRemove)
             self.adjmat = nx.to_numpy_array(G)
@@ -134,11 +137,13 @@ class MGraph(Individual):
         else:
             # self.edgeSwap()
             self.removeEdge()
+            self.edgeSwap()
         self.removeIsolates()
 
     def pair(self, other: np.ndarray):
         return MGraph(adjmat=nx.to_numpy_array(
             nx.disjoint_union(self._getGraph(), other._getGraph())))
+
 
 class Population:
 
@@ -155,6 +160,7 @@ class Population:
         self.individuals = self.individuals[-self.size:]
 
     def getParents(self):
+        # todo
         mothers = self.individuals[-2 * self.n_offspring::2]
         fathers = self.individuals[-2 * self.n_offspring+1::2]
 
@@ -179,49 +185,56 @@ class Evolution:
         #  todo implement this
         self.pool.replace(offspring)
 
-    def getTopK(self, k: int):
-        g = [self.pool.individuals[i]._getGraph() for i in range(k)]
-        f = [round(self.pool.fitness(g[i]), 4) for i in range(k)]
-        return g, f
+    def getAllIndividuals(self):
+        return [self.pool.individuals[i]._getGraph() for i in range(self.pool.size)]
 
+    def getAllFitnesses(self, graphs):
+        return [self.pool.fitness(g) for g in graphs]
+
+    def getTopK(self, k: int):
+        g = self.getAllIndividuals()
+        f = self.getAllFitnesses(g)
+        return g[:k], f[:k]
+
+
+def loadMoleculeDataset(mdir: str, batchSize: int = 256) -> MoleculeDataset:
+    return MoleculeDataset(mdir, batchSize)
 
 
 # driver
 if __name__ == "__main__":
-    useGdb13 = True
-    # if False, loads 20/500 files from GDB17 by default
-    if useGdb13:
-        molecule_dir = "gdb13"
-        md = MoleculeDataset(molecule_dir, batchSize=256)
-    else:
-        molecule_dir = "gdb17"
-        numFilesToRead = 20
-        md = MoleculeDataset(
-            molecule_dir, numFilesToRead=numFilesToRead, batchSize=256)
+    molset = loadMoleculeDataset("gdb13randomSample")
+    #  batch of MGraph objects initialized with SMILE strings
+    batch = molset.loadBatch()
 
-    b = md.loadBatch()
 
-    def fitness(G: nx.classes.graph.Graph):
-        connected = nx.is_connected(G)
-        avDeg = sum([v for (_, v) in G.degree()]) / len(G.nodes)
-        diam = nx.diameter(G) if connected else -5
-        conc = nx.number_connected_components(G)
-        shorp = nx.average_shortest_path_length(G) if connected else -5
-        # add max node centrality, find more
 
-        return avDeg + conc + (1 / diam) + (1 / shorp)
+    # def fitness(G: nx.classes.graph.Graph):
+    #     connected = nx.is_connected(G)
+    #     avDeg = sum([v for (_, v) in G.degree()]) / len(G.nodes)
+    #     diam = nx.diameter(G) if connected else -5
+    #     conc = nx.number_connected_components(G)
+    #     shorp = nx.average_shortest_path_length(G) if connected else -5
+    #     # add max node centrality, find more
 
-    print("initial")
-    vz.drawGraph([b[i]._getGraph() for i in range(5)])
+    #     return avDeg + conc + (1 / diam) + (1 / shorp)
 
-    ev = Evolution(fitness, b) # can do this in parallel?
-    numEpochs = 5
-    for i in range(numEpochs):
-        s = time.time()
-        ev.step()
-        e = time.time()
-        g, f = ev.getTopK(5)
-        vz.drawGraph(g, labels=f)
-        print(f"after {i+1} generation (pool size: {ev.pool.size})")
-        print(f"step {i+1} complete in: {round(e-s, 4)}s")
     
+
+    # print("initial")
+    # vz.drawGraph([b[i]._getGraph() for i in range(5)])
+
+    # evolution = Evolution(fitness, b)  # can do this in parallel?
+    # numEpochs = 5
+    # fits = []
+    # for i in range(numEpochs):
+    #     start = time.time()
+    #     evolution.step()
+    #     end = time.time()
+    #     individuals = evolution.getAllIndividuals()
+    #     fitnesses = evolution.getAllFitnesses(individuals)
+    #     fits.append(fitnesses)
+    #     vz.drawGraph(individuals[:8], labels=fitnesses[:8])
+    #     print(f"after {i+1} generation (pool size: {evolution.pool.size})")
+    #     print(f"step {i+1} complete in: {round(end-start, 4)}s")
+    # vz.showFitness(fits)

@@ -6,6 +6,11 @@ from typing import List, Union
 import matplotlib.pyplot as plt
 import networkx as nx
 
+def getColorMap(G: nx.classes.graph.Graph):
+    coloring = nx.coloring.greedy_color(G)
+    return [coloring[x] for x in sorted(coloring.keys())]
+
+
 
 def drawGraph(G: Union[List, nx.classes.graph.Graph], labels: List = None,
               node_color: List = None):
@@ -20,9 +25,9 @@ def drawGraph(G: Union[List, nx.classes.graph.Graph], labels: List = None,
         ax = all_axes.flat
         for i in range(len(G)):
             # nx.draw_shell(G[i], ax=ax[i], node_size=20, with_labels=True)
-            # nx.draw_planar(G[i], ax=ax[i], node_size=20, with_labels=True)
-            # nx.draw_circular(G[i], ax=ax[i], node_size=20, with_labels=True) 
-            nx.draw_circular(G[i], ax=ax[i], node_size=30, with_labels=False)
+            # nx.draw_planar(G[i], ax=ax[i], node_size=20, node_color=getColorMap(G[i]))
+            # nx.draw_circular(G[i], ax=ax[i], node_size=20, with_labels=False) 
+            nx.draw_circular(G[i], ax=ax[i], node_size=50, node_color=getColorMap(G[i]))
             if labels:
                 ax[i].set_title(labels[i])
     plt.show()
@@ -58,6 +63,14 @@ def makeGraphGrid(data: dict, rows: int = 4, cols: int = 4, useGdb13: bool = Tru
         plt.savefig(os.path.join("img", uuid.uuid4().hex[:10] + ".png"))
     plt.show()
 
+
+def showFitness(fits: List[Union[float, List]]):
+	assert isinstance(fits, list)
+	if isinstance(fits[0], list):
+		for f in fits:
+			plt.plot(f)
+	plt.legend([f"gen {i}" for i in range(len(fits))], loc='upper left')
+	plt.show()
 
 # def viewSmile(smile: str):
 #     template = Chem.MolFromSmiles('c1nccc2n1ccc2')
