@@ -5,7 +5,8 @@ from rdkit.Chem import AllChem, rdmolops
 import matplotlib.pyplot as plt
 
 import evo
-
+import random
+import hovercalc2 as hc
 
 
 def getNetXgraphFromMol(mol: Chem.Mol):
@@ -42,9 +43,9 @@ def getAtomsFromMol(mol):
 if __name__ == "__main__":
 	moldata = evo.loadMoleculeDataset("gdb13rand1M")
 	batch = moldata.loadBatch()
-	smile = batch[1].smile
-	mol = getMolFromSmileRDK(smile)
-	G = getNetXgraphFromMol(mol)
-	coords = normCoords(get2DCoordsFromMol(mol))
+	smile = batch[random.choice(range(len(batch)))].smile
+	molecule = getMolFromSmileRDK(smile)
+	G = getNetXgraphFromMol(molecule)
+	coords = normCoords(get2DCoordsFromMol(molecule))
 	drawGraphWithCoords(G, coords)
 	plt.show()

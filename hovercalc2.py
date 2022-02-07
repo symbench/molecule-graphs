@@ -14,12 +14,10 @@
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
-from sklearn.cluster import KMeans
 import json
 from tqdm import tqdm
 import csv
 from csv import reader
-import openpyxl
 import numpy as np
 import zipfile
 import pickle
@@ -30,6 +28,31 @@ import random
 import bz2
 
 from operator import itemgetter
+
+
+
+"""
+todo on hovercalc
+
+- access components in all_components.json
+- set default length for each connection, and shrink as components evolve
+- use graph coloring for component types, propeller orientation
+- pass a list of component types and quantities
+
+input: [for each vehicle, provide vectors specifying [number of rotors, number of batteries, orientation of each rotor]]
+
+output: vehicle performance, system and thruster
+
+maybe: precompute motor and propeller pairings?
+
+questions to answer:
+
+- how to account for multiple batteries in hovercalc?
+- how to estimate spanning area of vehicle?
+- how to get convex hull of vehicle by node position to estimate symmetry?
+- how to introduce fitness function term which removes subgraphs to choose active nodes?
+
+"""
 
 # Assumes a parent directory containing corpus
 CDIR = os.path.join(os.pardir, "athens-uav-corpus/CorpusSpreadsheets")
