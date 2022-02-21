@@ -64,28 +64,13 @@ def makeGrid(data: List[nx.classes.graph.Graph], nodepos: List,  rows: int = 4, 
         plt.savefig(os.path.join("img", uuid.uuid4().hex[:10] + ".png"))
     plt.show()
 
-        
 
-    # if useGdb13:
-    #     nodeA = [random.choice(data[5]) for _ in range(cols)]
-    #     nodeB = [random.choice(data[6]) for _ in range(cols)]
-    #     nodeC = [random.choice(data[7]) for _ in range(cols)]
-    #     nodeD = [random.choice(data[11]) for _ in range(cols)]
-    # else:
-    #     nodeA = [random.choice(data[14]) for _ in range(cols)]
-    #     nodeB = [random.choice(data[15]) for _ in range(cols)]
-    #     nodeC = [random.choice(data[16]) for _ in range(cols)]
-    #     nodeD = [random.choice(data[17]) for _ in range(cols)]
+def vizMotorPropellerPairings():
+	pass 
 
-    # axi = 0
-    # for x in [nodeA, nodeB, nodeC, nodeD]:
-    #     for y in range(cols):
-    #         nx.draw(x[y], ax=ax[axi], node_size=10)
-    #         axi += 1
+def vizMotorPropertiesVsPropDiameter():
+	pass 
 
-    # for a in ax:
-    #     a.margins(0.40)
-   
 
 
 def showFitness(fits: List[Union[float, List]]):

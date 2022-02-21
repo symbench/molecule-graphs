@@ -168,8 +168,8 @@ class MGraph(Individual):
         print(yd)
         for i, j in enumerate(idx):
             print(i, j)
-            orig[j][0] += xd[i]
-            orig[j][1] += yd[i]
+            orig[j][0] -= xd[i]
+            orig[j][1] -= yd[i]
         self.curpos = orig
 
 
